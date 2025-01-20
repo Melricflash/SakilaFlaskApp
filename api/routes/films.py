@@ -52,9 +52,28 @@ def delete_film(filmID):
     if not film:
         return jsonify({'message': 'Film Not Found'}), 404
 
-    # Delete the film, watch out for SQL Contraints
+    # Delete the film, watch out for SQL Constraints
     film.delete()
     db.session.commit()
     return jsonify({'message': f'Deleted film with ID: {filmID}'}), 200
+
+# Update a specific film from the database using its ID
+@films_router.patch('/update/<filmID>')
+def update_film(filmID):
+    film_data = request.json
+    # Get the specific record rather than the result
+    film = Film.query.filter_by(film_id = filmID).first()
+
+    if not film:
+        return jsonify({'message': 'Film Not Found'}), 404
+
+    film.description = film_data['description']
+    film.title = film_data['title']
+    film.release_year = film_data['release_year']
+    film.language_id = film_data['language_id']
+    film.original_language_id = film_data['original_language_id']
+
+    db.session.commit()
+    return jsonify({'message': 'Film Updated Successfully'}), 200
 
 
