@@ -13,7 +13,7 @@ actors_router = Blueprint('actors', __name__, url_prefix='/actors')
 # GET requests to the collection return a list of all actors in the database
 @actors_router.get('/')
 def read_all_actors():
-    actors = Actor.query.all() # Querying the databse
+    actors = Actor.query.all() # Querying the database
     return actors_schema.dump(actors)
 
 # GET requests o a specific document in the collection return a single actor
@@ -36,3 +36,34 @@ def create_actor():
     db.session.commit() # Update the database
 
     return actor_schema.dump(actor) # Serialise the created actor
+
+# Deletes an actor from the DB based on their ID
+@actors_router.route('/delete/<actorID>', methods = ['DELETE'])
+def delete_actor(actorID):
+    # Search for the actor in the actor table via ID
+    actor = Actor.query.filter_by(actor_id = actorID)
+
+    if not actor:
+        return jsonify({'message': 'Actor Not Found'}), 404
+
+    # Delete the actor
+    actor.delete()
+    # Commit to DB
+    db.session.commit()
+    return jsonify({'message': f'Deleted Actor with ID: {actorID}'}), 200
+
+# Updates an actor from the DB using their ID
+@actors_router.patch('/update/<actorID>')
+def update_actor(actorID):
+    actor_data = request.json # Get the parsed request body
+    # Search for the actor using their ID, use first() to get the actual record rather than result
+    actor = Actor.query.filter_by(actor_id=actorID).first()
+
+    if actor:
+        actor.first_name = actor_data['first_name']
+        actor.last_name = actor_data['last_name']
+        db.session.commit()
+        return jsonify({'message': 'Actor Updated Successfully'}), 200
+
+    else:
+        return jsonify({'message': 'Actor Not Found'}), 404
