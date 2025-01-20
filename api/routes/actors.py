@@ -60,8 +60,10 @@ def update_actor(actorID):
     actor = Actor.query.filter_by(actor_id=actorID).first()
 
     if actor:
+        # Update the records according to the JSON fields
         actor.first_name = actor_data['first_name']
         actor.last_name = actor_data['last_name']
+        # Update the database
         db.session.commit()
         return jsonify({'message': 'Actor Updated Successfully'}), 200
 
