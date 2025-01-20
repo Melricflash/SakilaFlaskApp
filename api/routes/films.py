@@ -44,3 +44,17 @@ def create_film():
 
     return film_schema.dump(film)
 
+# Delete a specific film from the database using the ID
+@films_router.route('/delete/<filmID>', methods = ['DELETE'])
+def delete_film(filmID):
+    film = Film.query.filter_by(film_id = filmID)
+
+    if not film:
+        return jsonify({'message': 'Film Not Found'}), 404
+
+    # Delete the film, watch out for SQL Contraints
+    film.delete()
+    db.session.commit()
+    return jsonify({'message': f'Deleted film with ID: {filmID}'}), 200
+
+
