@@ -16,6 +16,15 @@ def read_all_actors():
     actors = Actor.query.all() # Querying the database
     return actors_schema.dump(actors)
 
+# Paged version of the same thing
+@actors_router.get('/page/<int:page>')
+def read_actors_page(page = 1):
+    recordsPerPage = 50
+    actors = Actor.query.paginate(page = page, per_page = recordsPerPage, error_out = False).items
+
+    # Typically you would send this data to the template to render nicely, but I cba
+    return actors_schema.dump(actors)
+
 # GET requests o a specific document in the collection return a single actor
 @actors_router.get('/<actor_id>')
 def read_actor(actor_id):
