@@ -6,7 +6,7 @@ from api.models.film import Film
 from api.schemas.actor import actor_schema
 from api.schemas.film import film_schema, films_schema
 
-# Create the blueprint and insert into app.py
+# Create the blueprint and register inside __init__
 films_router = Blueprint('films', __name__, url_prefix='/films')
 
 # GET Requests all films in the database

@@ -29,6 +29,10 @@ def read_actors_page(page = 1):
 @actors_router.get('/<actor_id>')
 def read_actor(actor_id):
     actor = Actor.query.get(actor_id)
+
+    if not actor:
+        return jsonify({'message': 'Actor Not Found'}), 404
+
     return actor_schema.dump(actor)
 
 @actors_router.post('/')
